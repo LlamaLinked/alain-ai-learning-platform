@@ -1,3 +1,4 @@
+import React from 'react';
 type QA = { q: string; a: string };
 
 const faqs: QA[] = [

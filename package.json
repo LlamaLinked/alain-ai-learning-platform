@@ -6,5 +6,12 @@
   "workspaces": [
     "backend",
     "web"
-  ]
+  ],
+  "scripts": {
+    "lint": "npm -w web run lint",
+    "fix:react-imports": "node scripts/add-react-import.cjs",
+    "build": "npm -w backend run build && npm -w web run build",
+    "build:web": "npm -w web run build",
+    "build:backend": "npm -w backend run build"
+  }
 }
