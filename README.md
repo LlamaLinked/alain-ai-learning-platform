@@ -10,8 +10,8 @@ This project consists of two active components:
 - **Web** (`/web`): Next.js app with Clerk authentication (single source of truth for the UI)
 
 Deprecated:
-- ~~**Frontend** (`/frontend`)~~ React SPA (Vite) — see `frontend/DEPRECATED.md`
-- ~~**Legacy Frontend** (`/_legacy_frontend`)~~ — see `_legacy_frontend/DEPRECATED.md`
+- ~~**Frontend** (`/frontend`)~~ React SPA (Vite) — archived under `attic/frontend/DEPRECATED.md`
+- ~~**Legacy Frontend** (`/_legacy_frontend`)~~ — archived under `attic/_legacy_frontend/DEPRECATED.md`
 
 ## 🚀 Quick Start
 
