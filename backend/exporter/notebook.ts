@@ -1,13 +1,8 @@
-export type NotebookCell = {
-  cell_type: "markdown" | "code";
-  metadata: Record<string, any>;
-  source: string[];
-  outputs?: Array<Record<string, any>>;
-  execution_count?: number | null;
-};
-
 export type Notebook = {
-  cells: NotebookCell[];
+  cells: Array<
+    | { cell_type: "markdown"; metadata: object; source: string[] }
+    | { cell_type: "code"; metadata: object; source: string[]; outputs: any[]; execution_count: number | null }
+  >;
   metadata: Record<string, any>;
   nbformat: number;
   nbformat_minor: number;
@@ -58,3 +53,4 @@ export function buildNotebook(
     nbformat_minor: 5,
   };
 }
+
