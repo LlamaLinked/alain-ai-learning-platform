@@ -280,7 +280,7 @@ function mapProviderError(error: any): { code: string; message: string; details?
       };
     }
 
-    if (message.includes('404') || message.includes('model')) {
+    if (message.includes('404') || message.includes('model') || message.includes('not found')) {
       return {
         code: "model_not_found",
         message: "The specified AI model is not available. Please try a different model."
@@ -296,7 +296,8 @@ function mapProviderError(error: any): { code: string; message: string; details?
     
     return {
       code: "unknown_error",
-      message: "An unexpected error occurred. Please try again."
+      message: "An unexpected error occurred. Please try again.",
+      details: error.message
     };
   }
   

@@ -1,4 +1,5 @@
 import type { ExecuteRequest, Provider } from "./index";
+import { pipeSSE } from "./util";
 
 async function complete(body: ExecuteRequest): Promise<string> {
   const baseUrl = process.env.OPENAI_BASE_URL;
@@ -51,29 +52,4 @@ async function stream(body: ExecuteRequest, onData: (data: any) => void, signal?
   await pipeSSE(resp, onData);
 }
 
-async function pipeSSE(resp: Response, onData: (data: any) => void) {
-  const reader = resp.body!.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    let idx;
-    while ((idx = buffer.indexOf("\n\n")) !== -1) {
-      const chunk = buffer.slice(0, idx);
-      buffer = buffer.slice(idx + 2);
-      const line = chunk.trim();
-      if (!line) continue;
-      const prefix = "data:";
-      if (line.startsWith(prefix)) {
-        const d = line.slice(prefix.length).trim();
-        if (d === "[DONE]") return;
-        try { onData(JSON.parse(d)); } catch {}
-      }
-    }
-  }
-}
-
 export const openAIProvider: Provider = { execute: complete, stream };
-
