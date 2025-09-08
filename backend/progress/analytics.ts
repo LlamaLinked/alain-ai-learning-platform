@@ -15,8 +15,12 @@ interface TutorialAnalytics {
   lastAccessedMax?: string;
 }
 
+interface AnalyticsResponse {
+  items: TutorialAnalytics[];
+}
+
 // Provides aggregate progress analytics per tutorial or for a specific tutorial.
-export const analytics = api<AnalyticsRequest, TutorialAnalytics[]>(
+export const analytics = api<AnalyticsRequest, AnalyticsResponse>(
   { expose: true, method: "GET", path: "/progress/analytics" },
   async (req, ctx) => {
     await requireUserId(ctx);
@@ -62,14 +66,15 @@ export const analytics = api<AnalyticsRequest, TutorialAnalytics[]>(
       ORDER BY tutorial_id ASC
     `;
 
-    return rows.map(r => ({
-      tutorialId: r.tutorial_id,
-      title: r.title,
-      usersStarted: Number(r.users_started || 0),
-      usersCompleted: Number(r.users_completed || 0),
-      avgCompletionPercent: Number(r.avg_completion || 0),
-      lastAccessedMax: r.last_accessed_max || undefined,
-    }));
+    return {
+      items: rows.map(r => ({
+        tutorialId: r.tutorial_id,
+        title: r.title,
+        usersStarted: Number(r.users_started || 0),
+        usersCompleted: Number(r.users_completed || 0),
+        avgCompletionPercent: Number(r.avg_completion || 0),
+        lastAccessedMax: r.last_accessed_max || undefined,
+      })),
+    };
   }
 );
-
