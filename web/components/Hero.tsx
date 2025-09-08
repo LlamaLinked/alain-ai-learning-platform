@@ -8,10 +8,12 @@ export default function Hero() {
     <section className="relative isolate overflow-hidden px-6 py-20 text-center md:py-28">
       {/* Animated, GPU-friendly background */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="blob-1 absolute left-1/2 top-[-20%] h-[36rem] w-[36rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.20),rgba(59,130,246,0)_60%)] blur-3xl" />
-        <div className="blob-2 absolute right-[-10%] top-[0%] h-[32rem] w-[32rem] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(20,184,166,0.20),rgba(20,184,166,0)_60%)] blur-3xl" />
-        <div className="blob-3 absolute left-[-10%] bottom-[-10%] h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.12),rgba(59,130,246,0)_60%)] blur-3xl" />
+        <div className="blob-1 absolute left-1/2 top-[-20%] h-[36rem] w-[36rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(79,70,229,0.22),rgba(79,70,229,0)_60%)] blur-3xl" />
+        <div className="blob-2 absolute right-[-10%] top-[0%] h-[32rem] w-[32rem] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.18),rgba(59,130,246,0)_60%)] blur-3xl" />
+        <div className="blob-3 absolute left-[-10%] bottom-[-10%] h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(163,230,53,0.12),rgba(163,230,53,0)_60%)] blur-3xl" />
       </div>
+      {/* Beams/spotlight overlay */}
+      <div aria-hidden className="beams" />
 
       <div className="mx-auto max-w-3xl">
         <h1 className="text-balance text-4xl font-semibold tracking-tight md:text-6xl">
@@ -26,7 +28,7 @@ export default function Hero() {
             <SignInButton mode="modal">
               <button
                 onClick={() => trackCtaClick({ label: "Start Learning", context: "hero_signed_out" })}
-                className="focus-ring rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                className="focus-ring rounded-full bg-[var(--brand-primary)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--brand-primary-dark)]"
               >
                 Start Learning
               </button>
@@ -36,7 +38,7 @@ export default function Hero() {
             <Link
               href="/generate"
               onClick={() => trackCtaClick({ label: "Start Learning", context: "hero_signed_in" })}
-              className="focus-ring rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+              className="focus-ring rounded-full bg-[var(--brand-primary)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--brand-primary-dark)]"
             >
               Start Learning
             </Link>
@@ -61,4 +63,3 @@ export default function Hero() {
     </section>
   );
 }
-

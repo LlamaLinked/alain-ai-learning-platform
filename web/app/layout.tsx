@@ -8,6 +8,17 @@ import { BRAND } from "@/lib/brand";
 export const metadata: Metadata = {
   title: "ALAIN - Applied Learning AI Notebooks",
   description: "Interactive AI learning platform with real models and hands-on tutorials",
+  icons: [{ rel: "icon", url: "/logo.svg" }],
+  openGraph: {
+    title: "ALAIN - Applied Learning AI Notebooks",
+    description: "Interactive AI learning platform with real models and hands-on tutorials",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ALAIN - Applied Learning AI Notebooks",
+    description: "Interactive AI learning platform with real models and hands-on tutorials",
+  },
 };
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
