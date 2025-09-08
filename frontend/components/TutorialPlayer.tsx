@@ -10,6 +10,8 @@ import { useToast } from '@/components/ui/use-toast';
 import Navigation from './Navigation';
 import backend from '~backend/client';
 
+type Provider = 'poe' | 'openai-compatible';
+
 interface Tutorial {
   id: number;
   title: string;
@@ -92,7 +94,7 @@ export default function TutorialPlayer() {
       ];
 
       const result = await backend.execution.execute({
-        provider: tutorial.provider as "poe" | "openai-compatible",
+        provider: tutorial.provider as Provider,
         model: tutorial.model,
         messages,
         temperature: step.model_params?.temperature,
