@@ -1,40 +1,31 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "es2020",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "allowJs": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "~backend/*": [
-        "../backend/*"
-      ],
-      "~backend/client": [
-        "./client.ts"
-      ]
-    }
+      "@/*": ["./*"],
+      "~backend/*": ["../backend/*"],
+      "~backend/client": ["./client"]
+    },
+    "types": ["vite/client", "react", "react-dom"]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }
+
