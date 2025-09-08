@@ -12,6 +12,10 @@
     "fix:react-imports": "node scripts/add-react-import.cjs",
     "build": "npm -w backend run build && npm -w web run build",
     "build:web": "npm -w web run build",
-    "build:backend": "npm -w backend run build"
+    "build:backend": "npm -w backend run build",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.6"
   }
 }
