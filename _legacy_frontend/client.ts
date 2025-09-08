@@ -231,11 +231,23 @@ export namespace tutorials {
         }
 
         /**
-         * Retrieves all tutorials ordered by creation date.
+         * Retrieves tutorials with optional filters and pagination (legacy-safe).
+         * Accepts an optional params object. If omitted, calls without query string.
          */
-        public async list(): Promise<ResponseType<typeof api_tutorials_list_list>> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/tutorials`, {method: "GET", body: undefined})
+        public async list(params?: { difficulty?: string, page?: number, pageSize?: number, provider?: string, search?: string, tags?: string[] }): Promise<ResponseType<typeof api_tutorials_list_list>> {
+            // Build query only if params provided
+            let query: Record<string, string | string[]> | undefined = undefined
+            if (params) {
+                query = makeRecord<string, string | string[]>({
+                    difficulty: params?.difficulty,
+                    page:       params?.page === undefined ? undefined : String(params.page),
+                    pageSize:   params?.pageSize === undefined ? undefined : String(params.pageSize),
+                    provider:   params?.provider,
+                    search:     params?.search,
+                    tags:       params?.tags?.map((v) => v),
+                })
+            }
+            const resp = await this.baseClient.callTypedAPI(`/tutorials`, {query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_tutorials_list_list>
         }
 

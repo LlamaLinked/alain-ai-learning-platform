@@ -1,6 +1,12 @@
 @import "tailwindcss/preflight";
 @tailwind utilities;
 
+:root {
+  --brand-primary: #2563eb; /* blue-600 */
+  --brand-accent: #14b8a6;  /* teal-500 */
+  --brand-spark: #22d3ee;   /* cyan-400 */
+}
+
 /* Soft blob animations for background */
 @keyframes float1 {
   0%, 100% { transform: translate(-50%, 0) scale(1); opacity: .9; }
@@ -17,3 +23,15 @@
 .blob-1 { animation: float1 14s ease-in-out infinite; }
 .blob-2 { animation: float2 16s ease-in-out infinite; }
 .blob-3 { animation: float3 18s ease-in-out infinite; }
+
+/* Entrance-on-scroll reveal animations (respects reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { opacity: 0; transform: translateY(12px); transition: opacity 500ms ease, transform 500ms ease; }
+  .reveal.reveal-visible { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* Focus ring utility override for better visibility */
+.focus-ring:focus-visible { outline: none; box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5); }
