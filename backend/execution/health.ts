@@ -1,5 +1,5 @@
 import { api } from "encore.dev/api";
-import { getPoeApiKey, getOpenAIConfig } from "./config";
+import { secret } from "encore.dev/config";
 
 interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
@@ -48,7 +48,7 @@ async function checkPoeHealth(): Promise<ServiceHealth> {
   const startTime = Date.now();
 
   try {
-    const apiKey = getPoeApiKey();
+    const apiKey = process.env.POE_API_KEY;
     if (!apiKey) {
       return {
         status: 'unhealthy',
@@ -110,7 +110,8 @@ async function checkOpenAIHealth(): Promise<ServiceHealth> {
   const startTime = Date.now();
 
   try {
-    const { apiKey, baseUrl } = getOpenAIConfig();
+    const apiKey = process.env.OPENAI_API_KEY;
+    const baseUrl = process.env.OPENAI_BASE_URL;
 
     if (!apiKey || !baseUrl) {
       return {

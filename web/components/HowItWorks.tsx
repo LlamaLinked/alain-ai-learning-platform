@@ -1,4 +1,3 @@
-import React from 'react';
 const steps = [
   { n: 1, title: "Pick a model", desc: "Paste a Hugging Face URL or select a quick start." },
   { n: 2, title: "Generate a lesson", desc: "ALAIN builds a hands-on tutorial tailored to the model." },

@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-echo "Running lint (web) and typecheck (backend)…"
-npm -w web run lint || exit 1
-npm -w backend run typecheck || exit 1

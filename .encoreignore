@@ -1,7 +1,6 @@
 frontend/**
 _legacy_frontend/**
 web/**
-attic/**
 web/.next/**
 # Monorepo-style paths used in Leap builds
 packages/frontend/**

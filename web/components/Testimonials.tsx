@@ -1,5 +1,4 @@
 "use client";
-import React from 'react';
 
 type T = { name: string; role: string; quote: string };
 

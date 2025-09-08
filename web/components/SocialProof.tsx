@@ -1,4 +1,3 @@
-import React from 'react';
 import { formattedStats } from "@/lib/brand";
 
 export default function SocialProof() {

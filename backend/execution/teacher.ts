@@ -1,5 +1,7 @@
 import { api, APIError } from "encore.dev/api";
-import { getPoeApiKey } from "./config";
+import { secret } from "encore.dev/config";
+
+const poeApiKey = secret("POE_API_KEY");
 
 interface TeacherRequest {
   model: "GPT-OSS-20B" | "GPT-OSS-120B";
@@ -44,7 +46,7 @@ export const teacherGenerate = api<TeacherRequest, TeacherResponse>(
         max_tokens: req.max_tokens ?? harmonyParams.max_tokens,
       };
 
-      const apiKey = getPoeApiKey();
+      const apiKey = poeApiKey();
       if (!apiKey) {
         throw APIError.failedPrecondition("POE_API_KEY not configured");
       }

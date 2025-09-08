@@ -1,5 +1,4 @@
 "use client";
-import React from 'react';
 
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { useEffect, useMemo, useRef, useState } from "react";
