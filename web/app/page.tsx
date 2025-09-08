@@ -182,130 +182,103 @@ export default function Page() {
   };
 
   return (
-    <div style={{ padding: 24 }}>
-      <section style={{ maxWidth: 800, margin: "0 auto", textAlign: "center" }}>
-        <h1 style={{ fontSize: 48, lineHeight: 1.1, margin: 0, marginBottom: 16 }}>
-          Learn AI by Doing
-        </h1>
-        <p style={{ color: "#9CA3AF", fontSize: 18, marginBottom: 32 }}>
-          Generate interactive lessons from any Hugging Face model. Paste a URL or model name to get started.
+    <div className="relative min-h-[calc(100vh-0px)] overflow-hidden">
+      {/* Soft gradient background */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-[-10%] h-[40rem] w-[40rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,200,200,0.45),rgba(255,200,200,0)_60%)] blur-3xl" />
+        <div className="absolute right-[-10%] top-[10%] h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(200,220,255,0.45),rgba(200,220,255,0)_60%)] blur-3xl" />
+        <div className="absolute left-[-10%] bottom-[-10%] h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(200,255,230,0.35),rgba(200,255,230,0)_60%)] blur-3xl" />
+      </div>
+
+      <section className="mx-auto max-w-4xl px-6 py-16 text-center md:py-24">
+        <h1 className="text-4xl font-semibold tracking-tight md:text-6xl">Generate an ALAIN Notebook</h1>
+        <p className="mx-auto mt-3 max-w-2xl text-base text-gray-500 md:mt-4 md:text-lg">
+          Paste a Hugging Face URL or model id to create an interactive learning notebook.
         </p>
 
         <SignedOut>
-          <p style={{ marginBottom: 20 }}>Sign in to generate your first lesson:</p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-            <SignInButton />
-            <SignUpButton />
+          <div className="mx-auto mt-8 max-w-md rounded-xl border border-gray-200 bg-white/70 p-4 text-center backdrop-blur">
+            <p className="mb-2 text-sm">Sign in to generate your first lesson</p>
+            <div className="flex justify-center gap-3"><SignInButton /><SignUpButton /></div>
           </div>
         </SignedOut>
 
         <SignedIn>
-          <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-            <div style={{ marginBottom: 16 }}>
+          <form onSubmit={handleSubmit} className="mx-auto mb-4 mt-8 max-w-3xl">
+            <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white/70 px-5 py-4 shadow-sm backdrop-blur ring-1 ring-black/5">
+              <span className="select-none text-gray-400">+</span>
               <input
                 type="text"
+                className="flex-1 bg-transparent text-lg outline-none placeholder:text-gray-400"
                 value={hfUrl}
                 onChange={(e) => setHfUrl(e.target.value)}
-                placeholder="Paste Hugging Face URL or model name (e.g., microsoft/DialoGPT-medium)"
-                style={{
-                  width: "100%",
-                  padding: "16px",
-                  fontSize: 18,
-                  border: "2px solid #E5E7EB",
-                  borderRadius: 8,
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
+                placeholder="Paste HF URL or org/model (e.g., meta-llama/Llama-2-7b-chat-hf)"
                 disabled={loading}
               />
+              <div className="mx-1 hidden h-6 w-px bg-gray-200 md:block" />
+              <button
+                type="submit"
+                disabled={loading || !isValidInput}
+                className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${loading || !isValidInput ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+              >
+                {loading ? (loadingStep || 'Generating…') : 'Generate'}
+              </button>
             </div>
-            <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 16, flexWrap: "wrap" }}>
-              <label htmlFor="difficulty" style={{ fontWeight: 600 }}>Difficulty:</label>
+            <div className="mx-auto mt-3 flex flex-wrap items-center justify-center gap-3">
+              <label htmlFor="difficulty" className="text-sm font-medium text-gray-600">Difficulty</label>
               <select
                 id="difficulty"
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value as typeof difficulty)}
                 disabled={loading}
-                style={{ padding: "10px 12px", fontSize: 16, border: "2px solid #E5E7EB", borderRadius: 8 }}
+                className="rounded-full border border-gray-200 px-3 py-2 text-sm"
               >
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
                 <option value="advanced">Advanced</option>
               </select>
-
               {!isValidInput && hfUrl.trim().length > 0 && (
-                <span style={{ color: "#EF4444", fontSize: 14 }}>
-                  Invalid format. Try org/model or a HF URL.
-                </span>
+                <span className="text-sm text-red-500">Invalid format. Try org/model or a HF URL.</span>
               )}
             </div>
-            <button
-              type="submit"
-              disabled={loading || !isValidInput}
-              style={{
-                padding: "16px 32px",
-                fontSize: 18,
-                background: loading ? "#9CA3AF" : "#2563EB",
-                color: "white",
-                border: "none",
-                borderRadius: 8,
-                cursor: loading ? "not-allowed" : "pointer",
-                fontWeight: 600,
-              }}
-            >
-              {loading ? (loadingStep || "Generating Lesson...") : "Generate ALAIN Notebook"}
-            </button>
           </form>
 
-          {error && (
-            <p style={{ color: "#EF4444", marginTop: 16 }}>
-              {error}
-            </p>
-          )}
+          {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
 
           {/* Model preview card */}
           {(previewLoading || preview || previewError) && (
-            <div style={{
-              marginTop: 16,
-              padding: 16,
-              border: "1px solid #E5E7EB",
-              borderRadius: 8,
-              textAlign: "left",
-              background: "#FAFAFA",
-            }}>
-              {previewLoading && <p style={{ color: "#6B7280", margin: 0 }}>Fetching model information…</p>}
+            <div className="mx-auto mt-4 max-w-2xl rounded-xl border border-gray-200 bg-white/80 p-4 text-left shadow-sm">
+              {previewLoading && <p className="m-0 text-gray-500">Fetching model information…</p>}
               {!previewLoading && previewError && (
-                <p style={{ color: "#EF4444", margin: 0 }}>{previewError}</p>
+                <p className="m-0 text-red-500">{previewError}</p>
               )}
               {!previewLoading && preview && (
                 <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+                  <div className="flex items-center justify-between gap-3">
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: 18 }}>{preview.id}</div>
+                      <div className="text-lg font-semibold">{preview.id}</div>
                       {preview.pipeline_tag && (
-                        <div style={{ color: "#6B7280", fontSize: 14 }}>{preview.pipeline_tag}</div>
+                        <div className="text-sm text-gray-500">{preview.pipeline_tag}</div>
                       )}
                     </div>
-                    {typeof preview.likes === "number" && (
-                      <div title="Likes" style={{ color: "#6B7280", fontSize: 14 }}>❤ {preview.likes}</div>
+                    {typeof preview.likes === 'number' && (
+                      <div title="Likes" className="text-sm text-gray-500">❤ {preview.likes}</div>
                     )}
                   </div>
                   {preview.description && (
-                    <p style={{ marginTop: 8, color: "#374151", whiteSpace: "pre-line" }}>
-                      {preview.description.length > 300 ? preview.description.slice(0, 300) + "…" : preview.description}
+                    <p className="mt-2 whitespace-pre-line text-gray-700">
+                      {preview.description.length > 300 ? preview.description.slice(0, 300) + '…' : preview.description}
                     </p>
                   )}
                   {preview?.tags && preview.tags.length > 0 && (
-                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 6 }}>
+                    <div className="mt-2 flex flex-wrap gap-2">
                       {preview.tags.slice(0, 8).map((t) => (
-                        <span key={t} style={{ fontSize: 12, padding: "4px 8px", background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 9999 }}>
-                          {t}
-                        </span>
+                        <span key={t} className="rounded-full border border-gray-200 bg-white px-2 py-1 text-xs">{t}</span>
                       ))}
                     </div>
                   )}
                   {preview.private && (
-                    <p style={{ color: "#EF4444", marginTop: 8 }}>This model is private. You may need authorization.</p>
+                    <p className="mt-2 text-red-500">This model is private. You may need authorization.</p>
                   )}
                 </div>
               )}
@@ -313,9 +286,9 @@ export default function Page() {
           )}
 
           {/* Quick picks for popular models */}
-          <div style={{ marginTop: 20 }}>
-            <p style={{ color: "#6B7280", fontSize: 14, marginBottom: 8 }}>Try one of these popular models:</p>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+          <div className="mt-5">
+            <p className="mb-2 text-sm text-gray-500">Try one of these popular models:</p>
+            <div className="flex flex-wrap justify-center gap-2">
               {[
                 "gpt2",
                 "bert-base-uncased",
@@ -328,13 +301,7 @@ export default function Page() {
                   type="button"
                   onClick={() => setHfUrl(m.includes("/") ? m : `huggingface.co/${m}`)}
                   disabled={loading}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: 9999,
-                    border: "1px solid #E5E7EB",
-                    background: "white",
-                    cursor: loading ? "not-allowed" : "pointer",
-                  }}
+                  className={`rounded-full border border-gray-200 bg-white px-3 py-1 text-sm ${loading ? 'cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
                   title={`Use ${m}`}
                 >
                   {m}
@@ -342,10 +309,7 @@ export default function Page() {
               ))}
             </div>
           </div>
-
-          <p style={{ color: "#6B7280", fontSize: 14, marginTop: 20 }}>
-            Examples: huggingface.co/microsoft/DialoGPT-medium, meta-llama/Llama-2-7b-chat-hf
-          </p>
+          <p className="mt-5 text-sm text-gray-500">Examples: huggingface.co/microsoft/DialoGPT-medium, meta-llama/Llama-2-7b-chat-hf</p>
         </SignedIn>
       </section>
     </div>

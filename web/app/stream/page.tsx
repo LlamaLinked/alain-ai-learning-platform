@@ -3,10 +3,13 @@ import { useState } from "react";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 export default function StreamDemo() {
+  const [prompt, setPrompt] = useState("");
   const [out, setOut] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function run() {
+  async function run(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    if (!prompt.trim()) return;
     setOut("");
     setLoading(true);
     try {
@@ -16,7 +19,7 @@ export default function StreamDemo() {
         body: JSON.stringify({
           provider: "openai-compatible",
           model: "gpt-4o-mini",
-          messages: [{ role: "user", content: "Write a haiku about Next.js." }],
+          messages: [{ role: "user", content: prompt.trim() }],
           stream: true,
         }),
       });
@@ -53,18 +56,71 @@ export default function StreamDemo() {
   }
 
   return (
-    <div className="p-4">
-      <h1>Streaming Demo</h1>
-      <SignedOut>
-        <p>Please sign in to run the demo.</p>
-        <SignInButton />
-      </SignedOut>
-      <SignedIn>
-        <button disabled={loading} onClick={run}>
-          {loading ? "Running..." : "Run"}
-        </button>
-      </SignedIn>
-      <pre className="whitespace-pre-wrap mt-4">{out}</pre>
+    <div className="relative min-h-[calc(100vh-0px)] overflow-hidden">
+      {/* Soft gradient background */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-[-10%] h-[40rem] w-[40rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,200,200,0.45),rgba(255,200,200,0)_60%)] blur-3xl" />
+        <div className="absolute right-[-10%] top-[10%] h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(200,220,255,0.45),rgba(200,220,255,0)_60%)] blur-3xl" />
+        <div className="absolute left-[-10%] bottom-[-10%] h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(200,255,230,0.35),rgba(200,255,230,0)_60%)] blur-3xl" />
+      </div>
+
+      {/* Sidebar + Main */}
+      <div className="grid min-h-[inherit] grid-cols-1 md:grid-cols-[260px_1fr]">
+        {/* Sidebar (optional scaffold) */}
+        <aside className="hidden border-r bg-white/40 p-4 backdrop-blur md:block">
+          <nav className="space-y-1 text-sm text-gray-700">
+            <div className="mb-2 font-semibold text-gray-800">ALAIN</div>
+            <a className="block rounded-lg px-3 py-2 hover:bg-black/5" href="#">New notebook</a>
+            <a className="block rounded-lg px-3 py-2 hover:bg-black/5" href="#">My tutorials</a>
+            <a className="block rounded-lg px-3 py-2 hover:bg-black/5" href="#">Library</a>
+          </nav>
+        </aside>
+
+        {/* Main panel */}
+        <main className="px-6 py-8 md:py-12">
+          <h1 className="text-center text-3xl font-semibold md:text-4xl">Stream Playground</h1>
+          <p className="mx-auto mt-2 max-w-2xl text-center text-gray-500">
+            Try a prompt below. Output streams in real time.
+          </p>
+
+          <div className="mx-auto mt-8 max-w-3xl">
+            <SignedOut>
+              <div className="mx-auto max-w-md rounded-xl border border-gray-200 bg-white/70 p-4 text-center backdrop-blur">
+                <p className="mb-2 text-sm">Please sign in to run the demo.</p>
+                <SignInButton />
+              </div>
+            </SignedOut>
+
+            <SignedIn>
+              <form onSubmit={run} className="mx-auto mb-3 max-w-3xl">
+                <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white/70 px-5 py-4 shadow-sm backdrop-blur ring-1 ring-black/5">
+                  <span className="select-none text-gray-400">+</span>
+                  <input
+                    className="flex-1 bg-transparent text-lg outline-none placeholder:text-gray-400"
+                    type="text"
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder="Ask anything (the output appears below)…"
+                    disabled={loading}
+                  />
+                  <div className="mx-1 hidden h-6 w-px bg-gray-200 md:block" />
+                  <button
+                    type="submit"
+                    disabled={loading || !prompt.trim()}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${loading || !prompt.trim() ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+                  >
+                    {loading ? 'Running…' : 'Run'}
+                  </button>
+                </div>
+              </form>
+
+              <section className="mx-auto max-w-3xl rounded-xl border border-gray-200 bg-white/80 p-4 shadow-sm">
+                <pre className="whitespace-pre-wrap text-sm leading-relaxed">{out}</pre>
+              </section>
+            </SignedIn>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
