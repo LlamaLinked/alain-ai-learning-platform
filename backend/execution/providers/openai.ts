@@ -1,8 +1,8 @@
 import type { ExecuteRequest, Provider } from "./index";
+import { getOpenAIConfig } from "../config";
 
 async function complete(body: ExecuteRequest): Promise<string> {
-  const baseUrl = process.env.OPENAI_BASE_URL;
-  const apiKey = process.env.OPENAI_API_KEY;
+  const { baseUrl, apiKey } = getOpenAIConfig();
   if (!baseUrl || !apiKey) throw new Error("OPENAI_BASE_URL and OPENAI_API_KEY required");
   const resp = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
     method: "POST",
@@ -27,8 +27,7 @@ async function complete(body: ExecuteRequest): Promise<string> {
 }
 
 async function stream(body: ExecuteRequest, onData: (data: any) => void, signal?: AbortSignal) {
-  const baseUrl = process.env.OPENAI_BASE_URL;
-  const apiKey = process.env.OPENAI_API_KEY;
+  const { baseUrl, apiKey } = getOpenAIConfig();
   if (!baseUrl || !apiKey) throw new Error("OPENAI_BASE_URL and OPENAI_API_KEY required");
   const resp = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
     method: "POST",
@@ -76,4 +75,3 @@ async function pipeSSE(resp: Response, onData: (data: any) => void) {
 }
 
 export const openAIProvider: Provider = { execute: complete, stream };
-

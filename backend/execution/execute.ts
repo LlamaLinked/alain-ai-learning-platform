@@ -1,24 +1,7 @@
 import { api, APIError } from "encore.dev/api";
 import { requireUserId } from "../auth";
-import { secret } from "encore.dev/config";
-
-const poeApiKey = secret("POE_API_KEY");
-const openaiBaseUrl = secret("OPENAI_BASE_URL");
-const openaiApiKey = secret("OPENAI_API_KEY");
-
-interface Message {
-  role: "system" | "user" | "assistant";
-  content: string;
-}
-
-interface ExecuteRequest {
-  provider: "poe" | "openai-compatible";
-  model: string;
-  messages: Message[];
-  temperature?: number;
-  top_p?: number;
-  max_tokens?: number;
-}
+import type { ExecuteRequest, Provider as ExecProvider } from "./providers";
+import { poeProvider, openAIProvider } from "./providers";
 
 interface ExecuteResponse {
   success: boolean;
@@ -41,203 +24,47 @@ export const execute = api<ExecuteRequest, ExecuteResponse>(
       return { success: true, content };
     } catch (error) {
       const errorData = mapProviderError(error);
-      return {
-        success: false,
-        error: errorData
-      };
+      return { success: false, error: errorData };
     }
   }
 );
 
-// Teacher model router for lesson generation using GPT-OSS models (no auth required for internal use)
+// Teacher model router for lesson generation using GPT-OSS models
 export const teacherExecute = api<ExecuteRequest, ExecuteResponse>(
   { expose: true, method: "POST", path: "/teacher/execute" },
-  async (req, ctx) => {
+  async (req) => {
     try {
-      // Force Poe provider and GPT-OSS models for teacher functionality
-      const teacherReq = { ...req, provider: "poe" as const };
+      // Force Poe provider and restrict to GPT-OSS teacher models
+      const teacherReq: ExecuteRequest = { ...req, provider: "poe" };
 
-      // Validate and set teacher model - only allow GPT-OSS-20B and GPT-OSS-120B
-      if (!req.model || !req.model.toLowerCase().includes('gpt-oss')) {
-        teacherReq.model = 'GPT-OSS-20B'; // Default teacher model
-      } else if (req.model !== 'GPT-OSS-20B' && req.model !== 'GPT-OSS-120B') {
-        teacherReq.model = 'GPT-OSS-20B'; // Force to valid teacher model
+      if (!req.model || !req.model.toLowerCase().includes("gpt-oss")) {
+        teacherReq.model = "GPT-OSS-20B";
+      } else if (req.model !== "GPT-OSS-20B" && req.model !== "GPT-OSS-120B") {
+        teacherReq.model = "GPT-OSS-20B";
       }
 
-      // Set harmony-compatible parameters for GPT-OSS models
-      teacherReq.temperature = req.temperature ?? 0.3; // Lower temperature for more structured output
-      teacherReq.max_tokens = req.max_tokens ?? 2048; // Reasonable limit for lesson generation
+      // Harmony-leaning params
+      teacherReq.temperature = req.temperature ?? 0.3;
+      teacherReq.max_tokens = req.max_tokens ?? 2048;
 
       const provider = getProvider(teacherReq.provider);
       const content = await provider.execute(teacherReq);
       return { success: true, content };
     } catch (error) {
       const errorData = mapProviderError(error);
-      return {
-        success: false,
-        error: errorData
-      };
+      return { success: false, error: errorData };
     }
   }
 );
 
-interface Provider {
-  execute(req: ExecuteRequest): Promise<string>;
-}
-
-function getProvider(providerName: string): Provider {
+function getProvider(providerName: ExecuteRequest["provider"]): ExecProvider {
   switch (providerName) {
     case "poe":
-      return new PoeProvider();
+      return poeProvider;
     case "openai-compatible":
-      return new OpenAICompatibleProvider();
+      return openAIProvider;
     default:
       throw APIError.invalidArgument("unsupported provider");
-  }
-}
-
-class PoeProvider implements Provider {
-  async execute(req: ExecuteRequest): Promise<string> {
-    const apiKey = poeApiKey();
-    if (!apiKey) {
-      throw APIError.failedPrecondition("POE_API_KEY not configured");
-    }
-
-    const payload = {
-      model: this.mapModelName(req.model),
-      messages: req.messages,
-      stream: false,
-      temperature: req.temperature,
-      top_p: req.top_p,
-      max_tokens: req.max_tokens,
-    };
-
-    try {
-      const response = await fetch("https://api.poe.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "User-Agent": "ALAIN-Tutorial-Platform/1.0",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Unknown error');
-        throw new Error(`Poe API error (${response.status}): ${errorText}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.error) {
-        throw new Error(`Poe API error: ${data.error.message || 'Unknown error'}`);
-      }
-
-      return data.choices?.[0]?.message?.content || '';
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message.includes('401')) {
-          throw APIError.unauthenticated("Invalid Poe API key. Please check your POE_API_KEY configuration.");
-        }
-        if (error.message.includes('404')) {
-          throw APIError.notFound(`Model "${req.model}" is not available on Poe. Please check the model name.`);
-        }
-        if (error.message.includes('429')) {
-          throw APIError.resourceExhausted("Rate limit exceeded. Please wait a moment before trying again.");
-        }
-        if (error.message.includes('timeout') || error.message.includes('ECONNRESET')) {
-          throw APIError.deadlineExceeded("Request timed out. Please try again.");
-        }
-      }
-      throw error;
-    }
-  }
-}
-
-class OpenAICompatibleProvider implements Provider {
-  async execute(req: ExecuteRequest): Promise<string> {
-    const baseUrl = openaiBaseUrl();
-    const apiKey = openaiApiKey();
-    
-    if (!baseUrl || !apiKey) {
-      throw APIError.failedPrecondition("OPENAI_BASE_URL and OPENAI_API_KEY required");
-    }
-
-    const payload = {
-      model: req.model,
-      messages: req.messages,
-      stream: false,
-      temperature: req.temperature,
-      top_p: req.top_p,
-      max_tokens: req.max_tokens,
-    };
-
-    try {
-      const response = await fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "User-Agent": "ALAIN-Tutorial-Platform/1.0",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Unknown error');
-        throw new Error(`OpenAI API error (${response.status}): ${errorText}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.error) {
-        throw new Error(`OpenAI API error: ${data.error.message || 'Unknown error'}`);
-      }
-
-      return data.choices?.[0]?.message?.content || '';
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message.includes('401')) {
-          throw APIError.unauthenticated("Invalid API key for OpenAI-compatible provider. Please check your OPENAI_API_KEY configuration.");
-        }
-        if (error.message.includes('404')) {
-          throw APIError.notFound(`Model "${req.model}" is not available on the configured provider. Please check the model name and provider capabilities.`);
-        }
-        if (error.message.includes('429')) {
-          throw APIError.resourceExhausted("Rate limit exceeded. Please wait a moment before trying again.");
-        }
-        if (error.message.includes('timeout') || error.message.includes('ECONNRESET')) {
-          throw APIError.deadlineExceeded("Request timed out. Please try again.");
-        }
-      }
-      throw error;
-    }
-  }
-
-  private mapModelName(alainModel: string): string {
-    const modelMap: Record<string, string> = {
-      // GPT-OSS models (teacher models) - Primary models for lesson generation
-      'GPT-OSS-20B': 'GPT-OSS-20B',
-      'GPT-OSS-120B': 'GPT-OSS-120B',
-      'gpt-oss-20b': 'GPT-OSS-20B',
-      'gpt-oss-120b': 'GPT-OSS-120B',
-
-      // Popular Poe models for student interactions
-      'gpt-4o': 'GPT-4o',
-      'gpt-4o-mini': 'GPT-4o-mini',
-      'claude-3.5-sonnet': 'Claude-3.5-Sonnet',
-      'claude-3-haiku': 'Claude-3-Haiku',
-      'gemini-1.5-pro': 'Gemini-1.5-Pro',
-      'gemini-1.5-flash': 'Gemini-1.5-Flash',
-      'grok-2': 'Grok-2',
-      'llama-3.1-405b': 'Llama-3.1-405B',
-
-      // Default fallback for student interactions
-      'default': 'GPT-4o-mini'
-    };
-
-    return modelMap[alainModel.toLowerCase()] || modelMap['default'];
   }
 }
 
@@ -325,3 +152,4 @@ function getCodeFromAPIError(error: APIError): string {
       return "internal_error";
   }
 }
+
