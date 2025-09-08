@@ -53,7 +53,7 @@ export default function StreamDemo() {
   }
 
   return (
-    <div style={{ padding: 16 }}>
+    <div className="p-4">
       <h1>Streaming Demo</h1>
       <SignedOut>
         <p>Please sign in to run the demo.</p>
@@ -64,8 +64,7 @@ export default function StreamDemo() {
           {loading ? "Running..." : "Run"}
         </button>
       </SignedIn>
-      <pre style={{ whiteSpace: "pre-wrap", marginTop: 16 }}>{out}</pre>
+      <pre className="whitespace-pre-wrap mt-4">{out}</pre>
     </div>
   );
 }
-
