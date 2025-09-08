@@ -1,11 +1,21 @@
 # Ignore sibling frontends so Encore's tsdepsparser doesn't parse JSX/Next output
 ../frontend/**
+../_legacy_frontend/**
 ../web/**
 ../web/.next/**
+# Monorepo-style locations in some build environments
+../packages/frontend/**
+../packages/_legacy_frontend/**
+../packages/web/**
 ../**/.DS_Store
 
 # Also match if Encore resolves paths relative to repo root
 frontend/**
+_legacy_frontend/**
 web/**
 web/.next/**
 .DS_Store
+# Catch-all fallbacks (any nested copy)
+**/frontend/**
+**/_legacy_frontend/**
+**/web/**
