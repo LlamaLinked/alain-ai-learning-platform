@@ -31,7 +31,7 @@ export default function TutorialCatalog() {
         setLoading(true);
         setError(null);
         
-        const response = await backend.tutorials.list();
+        const response = await backend.tutorials.list({});
         setTutorials(response.tutorials);
       } catch (err) {
         setError('Failed to load tutorials. Please try again.');

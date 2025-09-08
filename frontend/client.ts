@@ -454,16 +454,19 @@ export namespace tutorials {
         /**
          * Retrieves tutorials with filtering, pagination, and metadata
          */
-        public async list(params: RequestType<typeof api_tutorials_list_list>): Promise<ResponseType<typeof api_tutorials_list_list>> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                difficulty: params.difficulty,
-                page:       params.page === undefined ? undefined : String(params.page),
-                pageSize:   params.pageSize === undefined ? undefined : String(params.pageSize),
-                provider:   params.provider,
-                search:     params.search,
-                tags:       params.tags?.map((v) => v),
-            })
+        public async list(params?: RequestType<typeof api_tutorials_list_list>): Promise<ResponseType<typeof api_tutorials_list_list>> {
+            // Build query only if params provided to avoid undefined property access
+            let query: Record<string, string | string[]> | undefined = undefined;
+            if (params) {
+                query = makeRecord<string, string | string[]>({
+                    difficulty: params.difficulty,
+                    page:       params.page === undefined ? undefined : String(params.page),
+                    pageSize:   params.pageSize === undefined ? undefined : String(params.pageSize),
+                    provider:   params.provider,
+                    search:     params.search,
+                    tags:       params.tags?.map((v) => v),
+                });
+            }
 
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/tutorials`, {query, method: "GET", body: undefined})
