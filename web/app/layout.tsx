@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import "./globals.css";
 import ALAINLogo from "@/components/ALAINLogo";
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
   description: "Interactive AI learning platform with real models and hands-on tutorials",
 };
 
+const inter = Inter({ subsets: ["latin"], display: "swap" });
+const jbMono = JetBrains_Mono({ subsets: ["latin"], display: "swap" });
+
 export default function RootLayout({
   children,
 }: {
@@ -17,7 +21,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body style={{ ['--brand-primary' as any]: BRAND.colors.primary, ['--brand-accent' as any]: BRAND.colors.accent, ['--brand-spark' as any]: BRAND.colors.spark }}>
+        <body className={inter.className} style={{ ['--brand-primary' as any]: BRAND.colors.primary, ['--brand-accent' as any]: BRAND.colors.accent, ['--brand-spark' as any]: BRAND.colors.spark }}>
           <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:shadow">Skip to content</a>
           <header className="flex items-center justify-between gap-3 border-b bg-white/70 p-4 backdrop-blur-sm">
             <div className="flex items-center gap-4">
