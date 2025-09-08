@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import Link from "next/link";
+import PillInput from "@/components/PillInput";
 
 export default function StreamDemo() {
   const [prompt, setPrompt] = useState("");
@@ -70,9 +72,9 @@ export default function StreamDemo() {
         <aside className="hidden border-r bg-white/40 p-4 backdrop-blur md:block">
           <nav className="space-y-1 text-sm text-gray-700">
             <div className="mb-2 font-semibold text-gray-800">ALAIN</div>
-            <a className="block rounded-lg px-3 py-2 hover:bg-black/5" href="#">New notebook</a>
-            <a className="block rounded-lg px-3 py-2 hover:bg-black/5" href="#">My tutorials</a>
-            <a className="block rounded-lg px-3 py-2 hover:bg-black/5" href="#">Library</a>
+            <Link className="block rounded-lg px-3 py-2 hover:bg-black/5" href="/">New notebook</Link>
+            <Link className="block rounded-lg px-3 py-2 hover:bg-black/5" href="/tutorials">My tutorials</Link>
+            <Link className="block rounded-lg px-3 py-2 hover:bg-black/5" href="/stream">Stream playground</Link>
           </nav>
         </aside>
 
@@ -92,27 +94,16 @@ export default function StreamDemo() {
             </SignedOut>
 
             <SignedIn>
-              <form onSubmit={run} className="mx-auto mb-3 max-w-3xl">
-                <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white/70 px-5 py-4 shadow-sm backdrop-blur ring-1 ring-black/5">
-                  <span className="select-none text-gray-400">+</span>
-                  <input
-                    className="flex-1 bg-transparent text-lg outline-none placeholder:text-gray-400"
-                    type="text"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Ask anything (the output appears below)…"
-                    disabled={loading}
-                  />
-                  <div className="mx-1 hidden h-6 w-px bg-gray-200 md:block" />
-                  <button
-                    type="submit"
-                    disabled={loading || !prompt.trim()}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${loading || !prompt.trim() ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
-                  >
-                    {loading ? 'Running…' : 'Run'}
-                  </button>
-                </div>
-              </form>
+              <PillInput
+                className="mb-3 max-w-3xl"
+                value={prompt}
+                onChange={setPrompt}
+                onSubmit={run}
+                placeholder="Ask anything (the output appears below)…"
+                submitLabel={loading ? 'Running' : 'Run'}
+                loading={loading}
+                valid={prompt.trim().length > 0}
+              />
 
               <section className="mx-auto max-w-3xl rounded-xl border border-gray-200 bg-white/80 p-4 shadow-sm">
                 <pre className="whitespace-pre-wrap text-sm leading-relaxed">{out}</pre>

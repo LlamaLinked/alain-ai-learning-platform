@@ -3,6 +3,7 @@
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import PillInput from "@/components/PillInput";
 
 export default function Page() {
   const [hfUrl, setHfUrl] = useState("");
@@ -204,44 +205,33 @@ export default function Page() {
         </SignedOut>
 
         <SignedIn>
-          <form onSubmit={handleSubmit} className="mx-auto mb-4 mt-8 max-w-3xl">
-            <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white/70 px-5 py-4 shadow-sm backdrop-blur ring-1 ring-black/5">
-              <span className="select-none text-gray-400">+</span>
-              <input
-                type="text"
-                className="flex-1 bg-transparent text-lg outline-none placeholder:text-gray-400"
-                value={hfUrl}
-                onChange={(e) => setHfUrl(e.target.value)}
-                placeholder="Paste HF URL or org/model (e.g., meta-llama/Llama-2-7b-chat-hf)"
-                disabled={loading}
-              />
-              <div className="mx-1 hidden h-6 w-px bg-gray-200 md:block" />
-              <button
-                type="submit"
-                disabled={loading || !isValidInput}
-                className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${loading || !isValidInput ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
-              >
-                {loading ? (loadingStep || 'Generating…') : 'Generate'}
-              </button>
-            </div>
-            <div className="mx-auto mt-3 flex flex-wrap items-center justify-center gap-3">
-              <label htmlFor="difficulty" className="text-sm font-medium text-gray-600">Difficulty</label>
-              <select
-                id="difficulty"
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value as typeof difficulty)}
-                disabled={loading}
-                className="rounded-full border border-gray-200 px-3 py-2 text-sm"
-              >
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-              {!isValidInput && hfUrl.trim().length > 0 && (
-                <span className="text-sm text-red-500">Invalid format. Try org/model or a HF URL.</span>
-              )}
-            </div>
-          </form>
+          <PillInput
+            className="mb-2 mt-8 max-w-3xl"
+            value={hfUrl}
+            onChange={setHfUrl}
+            onSubmit={handleSubmit}
+            placeholder="Paste HF URL or org/model (e.g., meta-llama/Llama-2-7b-chat-hf)"
+            submitLabel={loading ? (loadingStep || 'Generating') : 'Generate'}
+            loading={loading}
+            valid={isValidInput}
+          />
+          <div className="mx-auto mt-2 flex max-w-3xl flex-wrap items-center justify-center gap-3">
+            <label htmlFor="difficulty" className="text-sm font-medium text-gray-600">Difficulty</label>
+            <select
+              id="difficulty"
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value as typeof difficulty)}
+              disabled={loading}
+              className="rounded-full border border-gray-200 px-3 py-2 text-sm"
+            >
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+            {!isValidInput && hfUrl.trim().length > 0 && (
+              <span className="text-sm text-red-500">Invalid format. Try org/model or a HF URL.</span>
+            )}
+          </div>
 
           {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
 
