@@ -1,5 +1,3 @@
-/** @jsx React.createElement */
-/** @jsxFrag React.Fragment */
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -215,20 +213,25 @@ export default function TutorialPlayer() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center py-12">
-      <div className="text-muted-foreground">Loading tutorials...</div>
-    </div>;
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-muted-foreground">Loading tutorials...</div>
+      </div>
+    );
   }
 
   if (error || !tutorial) {
-    return <div className="flex items-center justify-center py-12">
-      <div className="text-destructive">{error || 'Tutorial not found'}</div>
-    </div>;
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-destructive">{error || 'Tutorial not found'}</div>
+      </div>
+    );
   }
 
   const step = tutorial.steps[currentStep];
 
-  return <div className="min-h-screen bg-background">
+  return (
+    <div className="min-h-screen bg-background">
       <Navigation showBack={true} backTo="/tutorials" backLabel="Back to Tutorials" />
 
       <div className="container mx-auto px-4 py-8">
@@ -348,5 +351,6 @@ export default function TutorialPlayer() {
         </div>
       </div>
       </div>
-    </div>;
+    </div>
+  );
 }
