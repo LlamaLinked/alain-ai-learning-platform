@@ -8,12 +8,11 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 ```bash
 # Start all services for development
 npm run dev:backend    # Encore.dev backend (port 4000)
-npm run dev:frontend   # React SPA with Vite (port 5173)  
 npm run dev:web        # Next.js app with Clerk auth (port 3000)
 
 # Alternative: Start individual services
 cd backend && encore run
-cd frontend && npx vite dev
+# (deprecated) cd frontend && npx vite dev
 cd web && npm run dev
 ```
 
@@ -37,7 +36,7 @@ encore secret set OPENAI_BASE_URL # optional
 
 ### Building for Production
 ```bash
-npm run build:frontend  # Build React SPA
+npm run build:web      # Build Next.js app
 npm run build:web      # Build Next.js app
 cd backend && encore build  # Build backend for deployment
 ```
@@ -101,7 +100,7 @@ User → Frontend/Web → Backend (Encore.ts) → AI Providers (Poe/OpenAI) → 
   - `export/`: Colab notebook export functionality
   - `auth.ts`: Clerk JWT authentication integration
 
-#### Frontend (`/frontend`) - React SPA
+#### Frontend (`/frontend`) - React SPA (deprecated)
 - **Framework**: React + Vite + TypeScript
 - **Purpose**: Lightweight tutorial player and demo interface
 - **Components**: Tutorial catalog, player, navigation, landing page

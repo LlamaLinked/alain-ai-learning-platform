@@ -38,7 +38,7 @@ const response = await client.chat.completions.create({
 - Requires OpenAI SDK v4+ (different from v3)
 - Poe-specific model names needed
 
-**📍 Current Status:** Implemented in `backend/execution/poe-nodejs.ts`
+**📍 Current Status:** Implemented via providers in `backend/execution/providers/poe.ts` and used by `backend/execution/execute.ts` and `backend/execution/stream.ts`
 
 ### 2. 🥈 **Python fastapi-poe SDK** (Already in Requirements)
 

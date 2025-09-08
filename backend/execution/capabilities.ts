@@ -53,7 +53,7 @@ export const getCapabilities = api<{}, CapabilitiesResponse>(
         requestsPerMinute: 30,
         tokensPerMinute: 100000
       },
-      status: process.env.POE_API_KEY ? 'available' : 'configuring',
+      status: (process.env.POE_API_KEY && process.env.POE_API_KEY.length > 0) ? 'available' : 'configuring',
       models: [
         {
           id: "GPT-OSS-20B",

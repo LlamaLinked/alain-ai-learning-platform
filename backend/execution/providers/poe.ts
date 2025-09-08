@@ -1,7 +1,8 @@
 import type { ExecuteRequest, Provider } from "./index";
+import { getPoeApiKey } from "../config";
 
 async function complete(body: ExecuteRequest): Promise<string> {
-  const apiKey = process.env.POE_API_KEY;
+  const apiKey = getPoeApiKey();
   if (!apiKey) throw new Error("POE_API_KEY not configured");
   const resp = await fetch("https://api.poe.com/v1/chat/completions", {
     method: "POST",
@@ -26,7 +27,7 @@ async function complete(body: ExecuteRequest): Promise<string> {
 }
 
 async function stream(body: ExecuteRequest, onData: (data: any) => void, signal?: AbortSignal) {
-  const apiKey = process.env.POE_API_KEY;
+  const apiKey = getPoeApiKey();
   if (!apiKey) throw new Error("POE_API_KEY not configured");
   const resp = await fetch("https://api.poe.com/v1/chat/completions", {
     method: "POST",
@@ -99,4 +100,3 @@ function mapModelName(alainModel: string): string {
 }
 
 export const poeProvider: Provider = { execute: complete, stream };
-
