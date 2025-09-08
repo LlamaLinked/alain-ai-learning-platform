@@ -4,11 +4,14 @@ An interactive AI learning platform that combines theory with hands-on experienc
 
 ## 🏗️ Architecture
 
-This project consists of three main components:
+This project consists of two active components:
 
 - **Backend** (`/backend`): TypeScript API server using Encore.dev framework
-- **Frontend** (`/frontend`): React SPA with TypeScript and Vite
-- **Web** (`/web`): Next.js app with Clerk authentication
+- **Web** (`/web`): Next.js app with Clerk authentication (single source of truth for the UI)
+
+Deprecated:
+- ~~**Frontend** (`/frontend`)~~ React SPA (Vite) — see `frontend/DEPRECATED.md`
+- ~~**Legacy Frontend** (`/_legacy_frontend`)~~ — see `_legacy_frontend/DEPRECATED.md`
 
 ## 🚀 Quick Start
 
@@ -57,10 +60,7 @@ encore secret set OPENAI_BASE_URL
 # Terminal 1: Backend (Encore.dev)
 npm run dev:backend
 
-# Terminal 2: Frontend (React + Vite)
-npm run dev:frontend
-
-# Terminal 3: Web App (Next.js + Clerk)
+# Terminal 2: Web App (Next.js + Clerk)
 npm run dev:web
 ```
 
@@ -72,9 +72,7 @@ alain-ai-learning-platform/
 │   ├── execution/          # AI model execution endpoints
 │   ├── tutorials/          # Tutorial management
 │   └── progress/           # User progress tracking
-├── frontend/               # React SPA
-│   ├── components/         # Reusable UI components
-│   └── lib/                # Utilities and configurations
+├── frontend/               # Deprecated (see frontend/DEPRECATED.md)
 ├── web/                    # Next.js authentication app
 │   └── app/                # Next.js app router
 ├── requirements.txt        # Python dependencies
@@ -89,11 +87,9 @@ npm run install:all
 
 # Start individual services
 npm run dev:backend     # Start Encore backend
-npm run dev:frontend    # Start React frontend
 npm run dev:web         # Start Next.js web app
 
 # Build for production
-npm run build:frontend  # Build React app
 npm run build:web       # Build Next.js app
 ```
 
@@ -156,13 +152,6 @@ cd web && npm run lint
 encore auth login
 git remote add encore encore://alain-ai-learning-platform-rui2
 git push encore
-```
-
-### Frontend Deployment
-```bash
-cd frontend
-npm run build
-# Deploy dist/ folder to your hosting provider
 ```
 
 ### Web App Deployment

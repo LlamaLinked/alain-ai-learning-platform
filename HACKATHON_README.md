@@ -28,7 +28,7 @@ Tagline: Learn models by doing.
 Quick start
 1) Install: `npm install`
 2) Configure env: `cp env-config-example.txt .env.local` and add keys
-3) Run services: `npm run dev:backend` | `npm run dev:frontend` | `npm run dev:web`
+3) Run services: `npm run dev:backend` | `npm run dev:web`
 4) Open the web app and load a sample lesson or paste a model link.
 
 How to run details live in `alain-ai-learning-platform/README.md`.
@@ -101,7 +101,7 @@ Prereqs: Node 18+, Go (Encore), optional Python 3.8+.
 3) Encore secrets: `encore secret set POE_API_KEY` (and optional OpenAI keys)
 4) Start dev:
    - Backend: `npm run dev:backend`
-   - Frontend (SPA): `npm run dev:frontend`
+   - Web (Next.js): `npm run dev:web`
    - Web (Next.js): `npm run dev:web`
 
 Providers
@@ -152,4 +152,3 @@ Providers
 - Built for Leap Open Source Hackathon 2025.
 - Teacher model: GPT‑oss‑20b (strategy varies by provider availability).
 - Thanks to the open‑source community for tooling and inspiration.
-
