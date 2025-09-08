@@ -2,5 +2,13 @@ frontend/**
 _legacy_frontend/**
 web/**
 web/.next/**
+# Monorepo-style paths used in Leap builds
+packages/frontend/**
+packages/_legacy_frontend/**
+packages/web/**
+# Fallback: ignore any nested copies just in case
+**/frontend/**
+**/_legacy_frontend/**
+**/web/**
 .DS_Store
 *.mdx
