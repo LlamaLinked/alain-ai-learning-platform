@@ -6,19 +6,12 @@ This directory contains the complete implementation of OpenAI Harmony-formatted 
 
 ## 📁 Files Created
 
-### ✅ Core Harmony Prompts (OpenAI Harmony Format Compliant)
+### Core Harmony Prompts
 - **`research.harmony.txt`** - Comprehensive model intelligence gathering
 - **`design.harmony.txt`** - Learning experience architecture planning
 - **`develop.harmony.txt`** - Interactive notebook implementation
 - **`validate.harmony.txt`** - Quality assurance and validation testing
 - **`orchestrator.harmony.txt`** - Master workflow coordination
-
-### 🔧 Harmony Format Features Implemented
-- **Proper Special Tokens**: `<|start|>`, `<|message|>`, `<|end|>`, `<|channel|>`, `<|constrain|>`, `<|call|>`, `<|return|>`
-- **Channel Structure**: Analysis, commentary, and final channels properly structured
-- **Function Calling**: Tool calls constrained with `<|constrain|> json` targeting `commentary` channel
-- **Role Hierarchy**: System → Developer → User → Assistant → Tool message flow
-- **TypeScript-like Signatures**: Function definitions use proper Harmony TypeScript-like syntax
 
 ### Documentation & Examples
 - **`README.md`** - Complete usage guide and integration documentation

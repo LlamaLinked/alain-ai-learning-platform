@@ -24,7 +24,6 @@ interface TutorialStep {
 
 // Updates an existing tutorial step.
 import { requireUserId } from "../auth";
-import { logStepChange } from "./versioning";
 
 export const updateStep = api<UpdateStepRequest, TutorialStep>(
   { expose: true, method: "PUT", path: "/tutorials/steps/:stepId" },
@@ -136,21 +135,6 @@ export const updateStep = api<UpdateStepRequest, TutorialStep>(
         throw APIError.internal("failed to update tutorial step");
       }
 
-      // best-effort change log
-      await logStepChange({
-        ctx,
-        tutorialId: updatedStep.tutorial_id,
-        stepId: updatedStep.id,
-        changeType: 'update',
-        snapshot: {
-          step_order: updatedStep.step_order,
-          title: updatedStep.title,
-          content: updatedStep.content,
-          code_template: updatedStep.code_template,
-          expected_output: updatedStep.expected_output,
-          model_params: updatedStep.model_params,
-        },
-      });
       return updatedStep;
     } catch (error) {
       // Re-throw API errors as-is

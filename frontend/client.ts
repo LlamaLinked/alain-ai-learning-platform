@@ -283,6 +283,7 @@ export namespace frontend {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
+import { analytics as api_progress_analytics_analytics } from "~backend/progress/analytics";
 import { getProgress as api_progress_get_getProgress } from "~backend/progress/get";
 import { health as api_progress_health_health } from "~backend/progress/health";
 import { updateProgress as api_progress_update_updateProgress } from "~backend/progress/update";
@@ -294,9 +295,24 @@ export namespace progress {
 
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
+            this.analytics = this.analytics.bind(this)
             this.getProgress = this.getProgress.bind(this)
             this.health = this.health.bind(this)
             this.updateProgress = this.updateProgress.bind(this)
+        }
+
+        /**
+         * Provides aggregate progress analytics per tutorial or for a specific tutorial.
+         */
+        public async analytics(params: RequestType<typeof api_progress_analytics_analytics>): Promise<ResponseType<typeof api_progress_analytics_analytics>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                tutorialId: params.tutorialId === undefined ? undefined : String(params.tutorialId),
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/progress/analytics`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_progress_analytics_analytics>
         }
 
         /**

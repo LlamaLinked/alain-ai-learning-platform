@@ -1,4 +1,4 @@
-import { api } from "encore.dev/api";
+import { api, APIError } from "encore.dev/api";
 import type { ExecuteRequest } from "./providers";
 import { poeProvider, openAIProvider, type Provider } from "./providers";
 import { requireUserId } from "../auth";
@@ -28,18 +28,42 @@ function incrementRate(userId: string): boolean {
 }
 
 
-export const executeStream = api<ExecuteRequest, { success: false; error: { code: string; message: string } }>(
-  { expose: true, method: "POST", path: "/execute/stream" },
+export const executeStream = api<ExecuteRequest, void>(
+  { expose: true, method: "POST", path: "/execute/stream", raw: true },
   async (req, ctx) => {
-    await requireUserId(ctx);
-    // Streaming via raw endpoints is not available with current Encore TS config.
-    // Use the Next.js App Router SSE at /api/execute instead.
-    return {
-      success: false,
-      error: {
-        code: "not_supported",
-        message: "Streaming over Encore TS is disabled here. Use web /api/execute for SSE."
-      }
-    };
+    const userId = await requireUserId(ctx);
+    if (!incrementRate(userId)) {
+      ctx.res.statusCode = 429;
+      ctx.res.end("Rate limited");
+      return;
+    }
+
+    ctx.res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+    ctx.res.setHeader("Cache-Control", "no-cache");
+    ctx.res.setHeader("Connection", "keep-alive");
+
+    const write = (s: string) => ctx.res.write(s);
+
+    const heartbeat = setInterval(() => {
+      write(`:\n\n`);
+    }, 15000);
+
+    const ac = new AbortController();
+    const timeout = setTimeout(() => ac.abort(), 120000);
+
+    try {
+      const provider = selectProvider(req.provider);
+      await provider.stream(req, (data) => {
+        write(`data: ${JSON.stringify(data)}\n\n`);
+      }, ac.signal);
+      write(`data: [DONE]\n\n`);
+    } catch (err: any) {
+      write(`event: error\n`);
+      write(`data: ${JSON.stringify({ message: err?.message || "stream error" })}\n\n`);
+    } finally {
+      clearInterval(heartbeat);
+      clearTimeout(timeout);
+      ctx.res.end();
+    }
   }
 );

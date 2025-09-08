@@ -367,7 +367,7 @@ export default function TutorialPage({ params }: { params: { id: string } }) {
           )}
 
           {/* Monaco editor (fallback to textarea) */}
-          <div className={`h-48 border border-gray-800 rounded ${monacoReady ? 'block' : 'hidden'}`} ref={monacoRef} />
+          <div className="h-48 border border-gray-800 rounded" ref={monacoRef} style={{ display: monacoReady ? 'block' : 'none' }} />
           {!monacoReady && (
             <textarea
               className="w-full min-h-32 p-3 bg-gray-900 rounded border border-gray-800 focus:border-blue-500 focus:outline-none"

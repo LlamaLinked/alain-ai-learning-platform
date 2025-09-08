@@ -39,8 +39,7 @@ export default function LandingPage() {
   useEffect(() => {
     const loadFeaturedTutorials = async () => {
       try {
-        // Pass an empty filter object to avoid undefined param access in generated clients
-        const response = await backend.tutorials.list({});
+        const response = await backend.tutorials.list();
         // Show first 3 tutorials as featured
         setFeaturedTutorials(response.tutorials.slice(0, 3));
       } catch (error) {

@@ -1,7 +1,6 @@
 import { api, APIError } from "encore.dev/api";
 import { tutorialsDB } from "./db";
 import { requireUserId } from "../auth";
-import { logStepChange } from "./versioning";
 
 interface ReorderStepsRequest {
   tutorialId: number;
@@ -208,16 +207,6 @@ export const reorderSteps = api<ReorderStepsRequest, ReorderStepsResponse>(
       }
 
       await tx.commit();
-
-      // best-effort: log a single 'reorder' change with snapshot of affected orders
-      if (reorderedSteps.length > 0) {
-        await logStepChange({
-          ctx,
-          tutorialId: req.tutorialId,
-          changeType: 'reorder',
-          snapshot: {},
-        });
-      }
       
       return { 
         success: true, 

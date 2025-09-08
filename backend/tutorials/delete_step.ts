@@ -1,6 +1,5 @@
 import { api, APIError } from "encore.dev/api";
 import { tutorialsDB } from "./db";
-import { logStepChange } from "./versioning";
 import { requireUserId } from "../auth";
 
 interface DeleteStepParams {
@@ -97,14 +96,6 @@ export const deleteStep = api<DeleteStepParams, DeleteStepResponse>(
       `;
 
       await tx.commit();
-      // best-effort change log
-      await logStepChange({
-        ctx,
-        tutorialId: stepToDelete.tutorial_id,
-        stepId: stepToDelete.id,
-        changeType: 'delete',
-        snapshot: { step_order: stepToDelete.step_order, title: stepToDelete.title },
-      });
 
       return {
         success: true,

@@ -244,111 +244,110 @@ export default function TutorialPlayer() {
             </div>
           </div>
 
-          {tutorial.steps.length > 1 && (
-            <div className="flex gap-2">
-              {tutorial.steps.map((_, index) => (
-                <Button
-                  key={index}
-                  variant={index === currentStep ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => {
-                    setCurrentStep(index);
-                    setPrompt(tutorial.steps[index].code_template || '');
-                    setOutput('');
-                    setStreamError(null);
-                  }}
-                >
-                  Step {index + 1}
-                </Button>
-              ))}
+      {tutorial.steps.length > 1 && (
+        <div className="flex gap-2">
+          {tutorial.steps.map((_, index) => (
+            <Button
+              key={index}
+              variant={index === currentStep ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => {
+                setCurrentStep(index);
+                setPrompt(tutorial.steps[index].code_template || '');
+                setOutput('');
+                setStreamError(null);
+              }}
+            >
+              Step {index + 1}
+            </Button>
+          ))}
+        </div>
+      )}
+
+      {streamError && (
+        <Alert variant={getErrorVariant(streamError.code)}>
+          {getErrorIcon(streamError.code)}
+          <AlertDescription>
+            <div className="space-y-2">
+              <div>
+                <strong>{getErrorTitle(streamError.code)}:</strong>{' '}
+                {getErrorDescription(streamError)}
+              </div>
+              {streamError.recoveryActions && streamError.recoveryActions.length > 0 && (
+                <div>
+                  <strong>Suggested actions:</strong>
+                  <ul className="list-disc list-inside mt-1 space-y-1">
+                    {streamError.recoveryActions.map((action, index) => (
+                      <li key={index} className="text-sm">{action}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
-          )}
+          </AlertDescription>
+        </Alert>
+      )}
 
-          {streamError && (
-            <Alert variant={getErrorVariant(streamError.code)}>
-              {getErrorIcon(streamError.code)}
-              <AlertDescription>
-                <div className="space-y-2">
-                  <div>
-                    <strong>{getErrorTitle(streamError.code)}:</strong>{' '}
-                    {getErrorDescription(streamError)}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>{step.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-sm max-w-none">
+                <div className="whitespace-pre-wrap">{step.content}</div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Prompt</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Enter your prompt here..."
+                className="min-h-32"
+                disabled={isRunning}
+              />
+              <div className="flex gap-2 mt-4">
+                {!isRunning ? (
+                  <Button onClick={handleRun} disabled={!prompt.trim()}>
+                    <Play className="w-4 h-4 mr-2" />
+                    Run
+                  </Button>
+                ) : (
+                  <Button onClick={handleStop} variant="destructive">
+                    <Square className="w-4 h-4 mr-2" />
+                    Stop
+                  </Button>
+                )}
+                {streamError && streamError.retryAfter && (
+                  <div className="text-sm text-muted-foreground self-center">
+                    Retry in {streamError.retryAfter}s
                   </div>
-                  {streamError.recoveryActions && streamError.recoveryActions.length > 0 && (
-                    <div>
-                      <strong>Suggested actions:</strong>
-                      <ul className="list-disc list-inside mt-1 space-y-1">
-                        {streamError.recoveryActions.map((action, index) => (
-                          <li key={index} className="text-sm">{action}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{step.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="prose prose-sm max-w-none">
-                  <div className="whitespace-pre-wrap">{step.content}</div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Prompt</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Enter your prompt here..."
-                  className="min-h-32"
-                  disabled={isRunning}
-                />
-                <div className="flex gap-2 mt-4">
-                  {!isRunning ? (
-                    <Button onClick={handleRun} disabled={!prompt.trim()}>
-                      <Play className="w-4 h-4 mr-2" />
-                      Run
-                    </Button>
-                  ) : (
-                    <Button onClick={handleStop} variant="destructive">
-                      <Square className="w-4 h-4 mr-2" />
-                      Stop
-                    </Button>
-                  )}
-                  {streamError && streamError.retryAfter && (
-                    <div className="text-sm text-muted-foreground self-center">
-                      Retry in {streamError.retryAfter}s
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Output</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-muted p-4 rounded-md min-h-64 font-mono text-sm whitespace-pre-wrap">
-                  {output || (isRunning ? 'Running...' : 'Click "Run" to see the output')}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
+
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Output</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-muted p-4 rounded-md min-h-64 font-mono text-sm whitespace-pre-wrap">
+                {output || (isRunning ? 'Running...' : 'Click "Run" to see the output')}
+              </div>
+            </CardContent>
+          </Card>
         </div>
+      </div>
       </div>
     </div>
   );

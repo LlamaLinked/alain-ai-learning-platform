@@ -1,7 +1,6 @@
 import { api, APIError } from "encore.dev/api";
 import { tutorialsDB } from "./db";
 import { requireUserId } from "../auth";
-import { logStepChange } from "./versioning";
 
 interface AddStepRequest {
   tutorialId: number;
@@ -115,21 +114,6 @@ export const addStep = api<AddStepRequest, TutorialStep>(
       }
 
       await tx.commit();
-      // best-effort change log
-      await logStepChange({
-        ctx,
-        tutorialId: req.tutorialId,
-        stepId: step.id,
-        changeType: 'create',
-        snapshot: {
-          step_order: step.step_order,
-          title: step.title,
-          content: step.content,
-          code_template: step.code_template,
-          expected_output: step.expected_output,
-          model_params: step.model_params,
-        },
-      });
       return step;
     } catch (error) {
       await tx.rollback();
